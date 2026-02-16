@@ -17,6 +17,7 @@ import React from 'react';
 import { StoryFn, Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import CaretDownIcon from '@hcl-software/enchanted-icons/dist/carbon/es/caret--down';
+import SearchIcon from '@hcl-software/enchanted-icons/dist/carbon/es/search';
 import InformationIcon from '@hcl-software/enchanted-icons/dist/carbon/es/information';
 
 import Autocomplete from './Autocomplete';
@@ -24,6 +25,7 @@ import { top100Films } from './data';
 import MenuItem from '../Menu/MenuItem';
 import ListItemText from '../List/ListItemText';
 import { TooltipPlacement } from '../Tooltip';
+import CircularProgress from '../ProgressIndicator/CircularProgress';
 
 export default {
   title: 'Inputs/Autocomplete',
@@ -222,6 +224,26 @@ export default {
         },
       },
     },
+    startAdornment: {
+      description: 'This can be used to add an icon at the start of the Autocomplete component.',
+      options: ['None', 'SearchIcon', 'InformationIcon'],
+      control: { type: 'radio' },
+      table: {
+        defaultValue: {
+          summary: 'None',
+        },
+      },
+    },
+    endAdornment: {
+      description: 'This can be used to add an icon at the end of the Autocomplete component.',
+      options: ['None', 'Loading', 'InformationIcon'],
+      control: { type: 'radio' },
+      table: {
+        defaultValue: {
+          summary: 'None',
+        },
+      },
+    },
   },
 } as Meta<typeof Autocomplete>;
 
@@ -243,6 +265,30 @@ const Template: StoryFn<typeof Autocomplete> = (args) => {
       break;
     default:
       customIcon = undefined;
+  }
+
+  let startAdornment: React.ReactNode = null;
+  switch (args.startAdornment as unknown as string) {
+    case 'SearchIcon':
+      startAdornment = <SearchIcon />;
+      break;
+    case 'InformationIcon':
+      startAdornment = <InformationIcon />;
+      break;
+    default:
+      startAdornment = null;
+  }
+
+  let endAdornment: React.ReactNode = null;
+  switch (args.endAdornment as unknown as string) {
+    case 'InformationIcon':
+      endAdornment = <InformationIcon />;
+      break;
+    case 'Loading':
+      endAdornment = <CircularProgress color="inherit" size={16} variant="indeterminate" />;
+      break;
+    default:
+      endAdornment = null;
   }
 
   return (
@@ -272,6 +318,8 @@ const Template: StoryFn<typeof Autocomplete> = (args) => {
       }}
       {...args}
       customIcon={customIcon}
+      startAdornment={startAdornment}
+      endAdornment={endAdornment}
     />
   );
 };
@@ -317,6 +365,8 @@ export const ExampleAutocomplete = {
     options: top100Films,
     sx: { minWidth: '240px' },
     customIcon: 'None',
+    startAdornment: 'None',
+    endAdornment: 'None',
   },
 };
 
@@ -361,5 +411,14 @@ export const ExampleAutocompleteFullWidth = {
   args: {
     ...ExampleAutocomplete.args,
     fullWidth: true,
+  },
+};
+
+export const ExampleAutocompleteStartAndEndAdornment = {
+  render: Template,
+  args: {
+    ...ExampleAutocomplete.args,
+    startAdornment: 'SearchIcon',
+    endAdornment: 'Loading',
   },
 };
